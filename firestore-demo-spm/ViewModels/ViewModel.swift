@@ -14,6 +14,45 @@ class ViewModel: ObservableObject {
     
     @Published var list = [Todo]()
     
+    func updateData(todoToUpdate: Todo) {
+        // get a reference to the database
+        let db = Firestore.firestore()
+        
+        // set the data to update
+        db.collection("todos").document(todoToUpdate.id).setData(["name":"Updated: \(todoToUpdate.name)"], merge: true) { error in
+            // check for errors
+            if error == nil {
+                
+                // get the new data
+                self.getData()
+            }
+        }
+        
+    }
+    
+    func deleteData(todoToDelete: Todo) {
+        // get a referenced to the database
+        let db = Firestore.firestore()
+        
+        // specify document to delete
+        db.collection("todos").document(todoToDelete.id).delete { error in
+            // check for errors
+            if error == nil {
+                // no error
+                
+                // Update the UI from the main thread
+                DispatchQueue.main.async {
+                    
+                    // remove the todo that was just deleted
+                    self.list.removeAll { todo in
+                        // check for the todo to remove
+                        return todo.id == todoToDelete.id
+                    }
+                }
+            }
+        }
+    }
+    
     func addData(name: String, notes: String) {
         // Get a reference to the database
         let db = Firestore.firestore()

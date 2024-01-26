@@ -18,7 +18,30 @@ struct ContentView: View {
         
         VStack {
             List(model.list) { item in
-                Text(item.name)
+                
+                HStack {
+                    Text(item.name)
+                    
+                    Spacer()
+                    
+                    // update button
+                    Button {
+                        // update todo
+                        model.updateData(todoToUpdate: item)
+                    } label: {
+                        Image(systemName: "pencil")
+                    }
+                    .buttonStyle(.borderless)
+                    
+                    // delete button
+                    Button {
+                        // delete todo
+                        model.deleteData(todoToDelete: item)
+                    } label: {
+                        Image(systemName: "minus.circle")
+                    }
+                    .buttonStyle(.borderless)
+                }
             }
             .listStyle(.inset)
             
